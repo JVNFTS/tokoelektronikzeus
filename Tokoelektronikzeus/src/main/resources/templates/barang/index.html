@@ -39,6 +39,7 @@
                     <th>Kategori</th>
                     <th>Harga</th>
                     <th>Stok</th>
+                    <th>Status</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -54,14 +55,26 @@
                               th:text="${barang.stok}"></span>
                     </td>
                     <td>
+                        <span th:if="${barang.aktif}"  class="badge badge-masuk">Aktif</span>
+                        <span th:unless="${barang.aktif}" class="badge badge-keluar">Nonaktif</span>
+                    </td>
+                    <td>
                         <a th:href="@{/barang/edit/{kode}(kode=${barang.kodeBarang})}" class="btn btn-secondary btn-sm">Edit</a>
-                        <a th:href="@{/barang/hapus/{kode}(kode=${barang.kodeBarang})}"
+                        <a th:if="${barang.aktif}"
+                           th:href="@{/barang/nonaktif/{kode}(kode=${barang.kodeBarang})}"
                            class="btn btn-danger btn-sm"
-                           onclick="return confirm('Hapus barang ini?')">Hapus</a>
+                           onclick="return confirm('Nonaktifkan barang ini?')">Nonaktifkan</a>
+                        <a th:unless="${barang.aktif}"
+                           th:href="@{/barang/aktif/{kode}(kode=${barang.kodeBarang})}"
+                           class="btn btn-secondary btn-sm">Aktifkan</a>
+                        <a th:unless="${barang.aktif}"
+                           th:href="@{/barang/hapus/{kode}(kode=${barang.kodeBarang})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Hapus permanen? Stok log tetap tersimpan.')">Hapus</a>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(listBarang)}">
-                    <td colspan="6" style="text-align:center; color:#4b5563; padding:32px;">
+                    <td colspan="7" style="text-align:center; color:#4b5563; padding:32px;">
                         Belum ada data barang. <a href="/barang/tambah" style="color:#f0b429;">Tambah sekarang</a>
                     </td>
                 </tr>
