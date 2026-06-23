@@ -20,7 +20,7 @@ public class Customer {
     @Column(name = "alamat", length = 255)
     private String alamat;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer")
     private List<Penjualan> penjualanList;
 
     public Customer() {}
@@ -34,13 +34,15 @@ public class Customer {
     public Long getId() { 
         return id; 
     }
+
     public void setId(Long id) { 
         this.id = id; 
     }
 
-    public String getNamaCustomer() { 
+    public String getNamaCustomer() {
         return namaCustomer; 
     }
+
     public void setNamaCustomer(String namaCustomer) { 
         this.namaCustomer = namaCustomer; 
     }
@@ -48,7 +50,7 @@ public class Customer {
     public String getNoTelepon() { 
         return noTelepon; 
     }
-
+    
     public void setNoTelepon(String noTelepon) { 
         this.noTelepon = noTelepon; 
     }
@@ -57,11 +59,11 @@ public class Customer {
         return alamat; 
     }
 
-    public void setAlamat(String alamat) {
+    public void setAlamat(String alamat) { 
         this.alamat = alamat; 
-        }
+    }
 
-    public List<Penjualan> getPenjualanList() {
+    public List<Penjualan> getPenjualanList() { 
         return penjualanList; 
     }
 
