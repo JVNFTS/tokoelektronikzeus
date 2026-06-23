@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Zeus</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0b1120; font-family: 'Segoe UI', sans-serif; color: #e5e7eb; min-height: 100vh; }
+        nav {
+            background: #111827;
+            border-bottom: 1px solid #1e2d45;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        .nav-brand { color: #f0b429; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+        .nav-brand span { color: #6b7280; font-weight: 400; font-size: 14px; margin-left: 8px; }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-user { color: #9ca3af; font-size: 14px; }
+        .nav-user b { color: #e5e7eb; }
+        .btn-logout {
+            padding: 6px 16px; background: transparent; border: 1px solid #374151;
+            border-radius: 6px; color: #9ca3af; font-size: 13px; text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: #f0b429; color: #f0b429; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+        .welcome { margin-bottom: 36px; }
+        .welcome h2 { font-size: 24px; font-weight: 700; color: #f0b429; }
+        .welcome p { color: #6b7280; font-size: 14px; margin-top: 4px; }
+        .menu-section { margin-bottom: 32px; }
+        .section-label {
+            font-size: 11px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: #4b5563; margin-bottom: 14px;
+            padding-bottom: 8px; border-bottom: 1px solid #1e2d45;
+        }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+        .menu-card {
+            background: #111827;
+            border: 1px solid #1e2d45;
+            border-radius: 10px;
+            padding: 24px 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: block;
+        }
+        .menu-card:hover {
+            border-color: #f0b429;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(240,180,41,0.08);
+        }
+        .menu-card.restock-card:hover { border-color: #60a5fa; box-shadow: 0 8px 24px rgba(96,165,250,0.08); }
+        .menu-icon { font-size: 28px; margin-bottom: 12px; }
+        .menu-title { color: #e5e7eb; font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .menu-desc { color: #6b7280; font-size: 12px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-right">
+        <span class="nav-user">Halo, <b th:text="${username}">User</b></span>
+        <a href="/logout" class="btn-logout">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="welcome">
+        <h2>Dashboard</h2>
+        <p>Selamat datang kembali. Pilih menu di bawah untuk memulai.</p>
+    </div>
+
+    <div class="menu-section">
+        <div class="section-label">Master Data</div>
+        <div class="menu-grid">
+            <a href="/barang" class="menu-card">
+                <div class="menu-icon">📦</div>
+                <div class="menu-title">Manajemen Barang</div>
+                <div class="menu-desc">Tambah, edit, dan hapus data produk elektronik</div>
+            </a>
+            <a href="/customer" class="menu-card">
+                <div class="menu-icon">👥</div>
+                <div class="menu-title">Data Customer</div>
+                <div class="menu-desc">Kelola data pelanggan toko</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="menu-section">
+        <div class="section-label">Transaksi & Operasional</div>
+        <div class="menu-grid">
+            <a href="/transaksi/baru" class="menu-card">
+                <div class="menu-icon">🛒</div>
+                <div class="menu-title">Transaksi Jual</div>
+                <div class="menu-desc">Catat penjualan barang ke customer, tambah customer baru langsung dari sini</div>
+            </a>
+            <a href="/transaksi/restock" class="menu-card restock-card">
+                <div class="menu-icon">📥</div>
+                <div class="menu-title">Restock Barang</div>
+                <div class="menu-desc">Tambah stok barang secara manual tanpa transaksi beli</div>
+            </a>
+            <a href="/transaksi" class="menu-card">
+                <div class="menu-icon">📋</div>
+                <div class="menu-title">Riwayat Transaksi</div>
+                <div class="menu-desc">Lihat semua riwayat transaksi penjualan</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="menu-section">
+        <div class="section-label">Laporan</div>
+        <div class="menu-grid">
+            <a href="/laporan/stok" class="menu-card">
+                <div class="menu-icon">📊</div>
+                <div class="menu-title">Laporan Stok</div>
+                <div class="menu-desc">Riwayat mutasi stok masuk dan keluar per barang</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Barang – Zeus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-links">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/barang" class="nav-link active">Barang</a>
+        <a href="/customer" class="nav-link">Customer</a>
+        <a href="/transaksi" class="nav-link">Transaksi</a>
+        <a href="/transaksi/restock" class="nav-link">Restock</a>
+        <a href="/laporan/stok" class="nav-link">Laporan</a>
+    </div>
+    <div class="nav-right">
+        <a href="/logout" class="btn btn-secondary btn-sm">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h2>Manajemen Barang</h2>
+            <p>Data produk elektronik yang tersedia di toko</p>
+        </div>
+        <a href="/barang/tambah" class="btn btn-primary">+ Tambah Barang</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Nama Barang</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="barang : ${listBarang}">
+                    <td th:text="${barang.kodeBarang}" style="color:#f0b429; font-weight:600; font-family:monospace;"></td>
+                    <td th:text="${barang.namaBarang}"></td>
+                    <td><span class="badge badge-beli" th:text="${barang.kategori}"></span></td>
+                    <td th:text="'Rp ' + ${#numbers.formatDecimal(barang.harga, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td>
+                        <span th:class="${barang.stok < 5} ? 'stat-value red' : 'stat-value green'"
+                              style="font-size:14px; font-weight:600;"
+                              th:text="${barang.stok}"></span>
+                    </td>
+                    <td>
+                        <a th:href="@{/barang/edit/{kode}(kode=${barang.kodeBarang})}" class="btn btn-secondary btn-sm">Edit</a>
+                        <a th:href="@{/barang/hapus/{kode}(kode=${barang.kodeBarang})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Hapus barang ini?')">Hapus</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(listBarang)}">
+                    <td colspan="6" style="text-align:center; color:#4b5563; padding:32px;">
+                        Belum ada data barang. <a href="/barang/tambah" style="color:#f0b429;">Tambah sekarang</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

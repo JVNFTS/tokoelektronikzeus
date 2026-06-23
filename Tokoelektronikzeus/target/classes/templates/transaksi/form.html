@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaksi Penjualan – Zeus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .total-box {
+            background: #0f1d30; border: 1px solid #1e2d45;
+            border-radius: 10px; padding: 20px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 20px;
+        }
+        .total-label { color: #9ca3af; font-size: 14px; }
+        .total-value { color: #f0b429; font-size: 28px; font-weight: 700; }
+        .items-section { margin: 24px 0; }
+        .items-section h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #6b7280; margin-bottom: 14px; }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.65); z-index: 999;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #0f1d30; border: 1px solid #1e2d45;
+            border-radius: 12px; padding: 28px 32px;
+            width: 100%; max-width: 440px;
+        }
+        .modal-box h3 { margin: 0 0 20px; color: #f0b429; font-size: 16px; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+        .customer-row { display: flex; gap: 8px; align-items: flex-end; }
+        .customer-row select { flex: 1; }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-links">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/barang" class="nav-link">Barang</a>
+        <a href="/customer" class="nav-link">Customer</a>
+        <a href="/transaksi" class="nav-link active">Transaksi</a>
+        <a href="/transaksi/restock" class="nav-link">Restock</a>
+        <a href="/laporan/stok" class="nav-link">Laporan</a>
+    </div>
+    <div class="nav-right">
+        <a href="/logout" class="btn btn-secondary btn-sm">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h2>Transaksi Penjualan</h2>
+            <p th:text="'No. Transaksi: ' + ${noTransaksi}" style="font-family:monospace; color:#f0b429;"></p>
+        </div>
+        <a href="/transaksi" class="btn btn-secondary">← Batal</a>
+    </div>
+
+    <form action="/transaksi/simpan" method="post" id="formTransaksi">
+        <input type="hidden" name="noTransaksi" th:value="${noTransaksi}">
+
+        <div class="form-card" style="max-width:100%; margin-bottom:20px;">
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Customer (opsional)</label>
+                    <div class="customer-row">
+                        <select name="customerId" id="customerSelect">
+                            <option value="">— Pelanggan Umum —</option>
+                            <option th:each="c : ${listCustomer}"
+                                    th:value="${c.id}"
+                                    th:text="${c.namaCustomer}"></option>
+                        </select>
+                        <button type="button" class="btn btn-primary btn-sm"
+                                onclick="bukaModalCustomer()"
+                                title="Daftarkan customer baru">+ Baru</button>
+                    </div>
+                </div>
+
+                <div class="form-group full">
+                    <label>Keterangan</label>
+                    <input type="text" name="keterangan" placeholder="Keterangan transaksi (opsional)">
+                </div>
+            </div>
+        </div>
+
+        <div class="items-section">
+            <h3>Item Barang</h3>
+            <div id="itemContainer"></div>
+            <button type="button" class="btn btn-secondary" onclick="tambahItem()" style="margin-top:8px;">
+                + Tambah Barang
+            </button>
+        </div>
+
+        <div class="total-box">
+            <span class="total-label">Total Transaksi</span>
+            <span class="total-value" id="totalDisplay">Rp 0</span>
+        </div>
+
+        <div style="margin-top:24px; display:flex; gap:12px;">
+            <button type="submit" class="btn btn-primary" style="padding:12px 32px; font-size:15px;">
+                Simpan Transaksi
+            </button>
+            <a href="/transaksi" class="btn btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+
+<div class="modal-overlay" id="modalCustomer">
+    <div class="modal-box">
+        <h3>➕ Daftarkan Customer Baru</h3>
+
+        <div class="form-group">
+            <label>Nama Customer <span style="color:#ef4444;">*</span></label>
+            <input type="text" id="mc_nama" placeholder="Nama lengkap pelanggan">
+        </div>
+        <div class="form-group">
+            <label>No. Telepon</label>
+            <input type="text" id="mc_telp" placeholder="08xxxxxxxxxx">
+        </div>
+        <div class="form-group">
+            <label>Alamat</label>
+            <input type="text" id="mc_alamat" placeholder="Alamat (opsional)">
+        </div>
+        <p id="mc_error" style="color:#ef4444; font-size:13px; margin:0; display:none;"></p>
+
+        <div class="modal-actions">
+            <button type="button" class="btn btn-primary" onclick="simpanCustomerBaru()">Simpan & Pilih</button>
+            <button type="button" class="btn btn-secondary" onclick="tutupModal()">Batal</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const dataBarang = [];
+
+    function formatRupiah(angka) {
+        return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
+    }
+
+    function tambahItem() {
+        const container = document.getElementById('itemContainer');
+        const row = document.createElement('div');
+        row.className = 'item-row';
+
+        let options = '<option value="">-- Pilih Barang --</option>';
+        dataBarang.forEach(b => {
+            options += `<option value="${b.kodeBarang}" data-harga="${b.harga}" data-stok="${b.stok}">
+                ${b.namaBarang} — Rp ${b.harga.toLocaleString('id-ID')} (Stok: ${b.stok})
+            </option>`;
+        });
+
+        row.innerHTML = `
+            <div class="form-group" style="margin:0;">
+                <select name="kodeBarang" onchange="hitungTotal()" required>${options}</select>
+            </div>
+            <div class="form-group" style="margin:0;">
+                <input type="number" name="jumlah" value="1" min="1"
+                       placeholder="Jml" onchange="hitungTotal()" required>
+            </div>
+            <button type="button" class="btn-remove" onclick="hapusItem(this)">✕</button>
+        `;
+        container.appendChild(row);
+        hitungTotal();
+    }
+
+    function hapusItem(btn) {
+        btn.closest('.item-row').remove();
+        hitungTotal();
+    }
+
+    function hitungTotal() {
+        let total = 0;
+        document.querySelectorAll('.item-row').forEach(row => {
+            const sel = row.querySelector('select[name="kodeBarang"]');
+            const jml = row.querySelector('input[name="jumlah"]');
+            if (sel && jml && sel.value) {
+                const opt = sel.selectedOptions[0];
+                const harga = parseFloat(opt.dataset.harga || 0);
+                total += harga * (parseInt(jml.value) || 0);
+            }
+        });
+        document.getElementById('totalDisplay').textContent = formatRupiah(total);
+    }
+
+    function bukaModalCustomer() {
+        document.getElementById('mc_nama').value = '';
+        document.getElementById('mc_telp').value = '';
+        document.getElementById('mc_alamat').value = '';
+        document.getElementById('mc_error').style.display = 'none';
+        document.getElementById('modalCustomer').classList.add('active');
+        setTimeout(() => document.getElementById('mc_nama').focus(), 100);
+    }
+
+    function tutupModal() {
+        document.getElementById('modalCustomer').classList.remove('active');
+    }
+
+    async function simpanCustomerBaru() {
+        const nama  = document.getElementById('mc_nama').value.trim();
+        const telp  = document.getElementById('mc_telp').value.trim();
+        const alamat = document.getElementById('mc_alamat').value.trim();
+        const errEl = document.getElementById('mc_error');
+
+        if (!nama) {
+            errEl.textContent = 'Nama customer wajib diisi.';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const params = new URLSearchParams({ namaCustomer: nama, noTelepon: telp, alamat: alamat });
+
+        try {
+            const resp = await fetch('/transaksi/customer-baru', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            });
+
+            if (!resp.ok) throw new Error('Gagal menyimpan');
+
+            const data = await resp.json();
+
+            const select = document.getElementById('customerSelect');
+            const opt = document.createElement('option');
+            opt.value = data.id;
+            opt.textContent = data.namaCustomer;
+            opt.selected = true;
+            select.appendChild(opt);
+
+            tutupModal();
+        } catch (e) {
+            errEl.textContent = 'Gagal menyimpan customer. Coba lagi.';
+            errEl.style.display = 'block';
+        }
+    }
+
+    document.getElementById('modalCustomer').addEventListener('click', function(e) {
+        if (e.target === this) tutupModal();
+    });
+
+    tambahItem();
+</script>
+</body>
+</html>

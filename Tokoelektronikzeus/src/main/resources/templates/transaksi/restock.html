@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restock Barang – Zeus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .restock-badge {
+            display: inline-block; background: #1e3a5f; color: #60a5fa;
+            padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+            letter-spacing: 0.5px; margin-left: 10px; vertical-align: middle;
+        }
+        .items-section { margin: 24px 0; }
+        .items-section h3 { font-size: 13px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.8px; color: #6b7280; margin-bottom: 14px; }
+        .kode-hint {
+            font-size: 12px; color: #6b7280; margin-top: 4px;
+        }
+        .autocomplete-wrapper { position: relative; flex: 1; }
+        .autocomplete-list {
+            position: absolute; top: 100%; left: 0; right: 0;
+            background: #0f1d30; border: 1px solid #1e2d45;
+            border-radius: 6px; z-index: 100; max-height: 200px; overflow-y: auto;
+        }
+        .autocomplete-list div {
+            padding: 8px 12px; cursor: pointer; font-size: 13px; color: #d1d5db;
+        }
+        .autocomplete-list div:hover { background: #1e2d45; color: #f0b429; }
+        .autocomplete-list .ac-kode { font-family: monospace; color: #f0b429; font-size: 12px; margin-right: 6px; }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-links">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/barang" class="nav-link">Barang</a>
+        <a href="/customer" class="nav-link">Customer</a>
+        <a href="/transaksi" class="nav-link">Transaksi</a>
+        <a href="/transaksi/restock" class="nav-link active">Restock</a>
+        <a href="/laporan/stok" class="nav-link">Laporan</a>
+    </div>
+    <div class="nav-right">
+        <a href="/logout" class="btn btn-secondary btn-sm">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h2>Restock Barang <span class="restock-badge">MASUK STOK</span></h2>
+            <p th:text="'No. Restock: ' + ${noTransaksi}" style="font-family:monospace; color:#60a5fa;"></p>
+        </div>
+        <a href="/transaksi/riwayat-restock" class="btn btn-secondary">📋 Riwayat Restock</a>
+    </div>
+
+    <!-- Flash messages -->
+    <div class="alert alert-success" th:if="${sukses}" th:text="${sukses}"></div>
+    <div class="alert alert-danger"  th:if="${error}"  th:text="${error}"></div>
+
+    <div class="form-card" style="margin-bottom:16px; padding: 14px 20px; background:#0d1b2a; border:1px solid #1e3a5f; border-radius:8px;">
+        <p style="margin:0; color:#60a5fa; font-size:13px;">
+            ℹ️ Masukkan kode barang dan jumlah yang ingin ditambahkan ke stok.
+            Stok akan langsung bertambah tanpa transaksi pembelian.
+        </p>
+    </div>
+
+    <form action="/transaksi/restock/simpan" method="post" id="formRestock">
+        <input type="hidden" name="noTransaksi" th:value="${noTransaksi}">
+
+        <div class="form-card" style="max-width:100%; margin-bottom:20px;">
+            <div class="form-group">
+                <label>Keterangan</label>
+                <input type="text" name="keterangan" placeholder="Keterangan restock (opsional)">
+            </div>
+        </div>
+
+        <!-- Daftar Item Restock -->
+        <div class="items-section">
+            <h3>Item Restock</h3>
+            <div id="itemContainer"></div>
+            <button type="button" class="btn btn-secondary" onclick="tambahItem()" style="margin-top:8px;">
+                + Tambah Barang
+            </button>
+        </div>
+
+        <div style="margin-top:24px; display:flex; gap:12px;">
+            <button type="submit" class="btn btn-primary" style="padding:12px 32px; font-size:15px;">
+                Simpan Restock
+            </button>
+            <a href="/barang" class="btn btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>
+
+<script th:inline="javascript">
+    const dataBarang = /*[[${listBarang}]]*/ [];
+
+    function tambahItem() {
+        const container = document.getElementById('itemContainer');
+        const idx = Date.now();
+
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+            <div class="autocomplete-wrapper" style="margin:0;">
+                <input type="text"
+                       name="kodeBarang"
+                       placeholder="Ketik kode atau nama barang..."
+                       autocomplete="off"
+                       oninput="cariBarang(this, ${idx})"
+                       onfocus="cariBarang(this, ${idx})"
+                       required>
+                <div class="autocomplete-list" id="ac_${idx}" style="display:none;"></div>
+            </div>
+            <div class="form-group" style="margin:0; min-width:100px; max-width:140px;">
+                <input type="number" name="jumlah" value="1" min="1" placeholder="Jumlah" required>
+            </div>
+            <button type="button" class="btn-remove" onclick="hapusItem(this)">✕</button>
+        `;
+        container.appendChild(row);
+    }
+
+    function cariBarang(input, idx) {
+        const q = input.value.toLowerCase();
+        const list = document.getElementById('ac_' + idx);
+
+        const filtered = q.length === 0
+            ? dataBarang.slice(0, 20)
+            : dataBarang.filter(b =>
+                b.kodeBarang.toLowerCase().includes(q) ||
+                b.namaBarang.toLowerCase().includes(q)
+            ).slice(0, 15);
+
+        if (filtered.length === 0) {
+            list.style.display = 'none';
+            return;
+        }
+
+        list.innerHTML = filtered.map(b => `
+            <div onclick="pilihBarang(this, '${b.kodeBarang}', ${idx})">
+                <span class="ac-kode">${b.kodeBarang}</span> ${b.namaBarang}
+                <span style="color:#6b7280; font-size:11px; float:right;">Stok: ${b.stok}</span>
+            </div>
+        `).join('');
+        list.style.display = 'block';
+    }
+
+    function pilihBarang(el, kode, idx) {
+        const row = el.closest('.item-row');
+        row.querySelector('input[name="kodeBarang"]').value = kode;
+        document.getElementById('ac_' + idx).style.display = 'none';
+    }
+
+    function hapusItem(btn) {
+        btn.closest('.item-row').remove();
+    }
+
+    document.addEventListener('click', function(e) {
+        document.querySelectorAll('.autocomplete-list').forEach(list => {
+            if (!list.contains(e.target) && !list.previousElementSibling?.contains(e.target)) {
+                list.style.display = 'none';
+            }
+        });
+    });
+
+    tambahItem();
+</script>
+</body>
+</html>

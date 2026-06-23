@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Barang – Zeus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-links">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/barang" class="nav-link active">Barang</a>
+        <a href="/customer" class="nav-link">Customer</a>
+        <a href="/transaksi" class="nav-link">Transaksi</a>
+        <a href="/transaksi/restock" class="nav-link">Restock</a>
+        <a href="/laporan/stok" class="nav-link">Laporan</a>
+    </div>
+    <div class="nav-right">
+        <a href="/logout" class="btn btn-secondary btn-sm">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="page-header">
+        <div>
+            <h2 th:text="${mode == 'tambah'} ? 'Tambah Barang' : 'Edit Barang'"></h2>
+            <p>Isi data barang di bawah ini</p>
+        </div>
+        <a href="/barang" class="btn btn-secondary">← Kembali</a>
+    </div>
+
+    <div class="form-card">
+        <form th:action="${mode == 'tambah'} ? @{/barang/simpan} : @{/barang/update}"
+              th:object="${barang}" method="post">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Kode Barang</label>
+                    <input type="text" th:field="*{kodeBarang}"
+                           th:readonly="${mode == 'edit'}"
+                           placeholder="Contoh: ELK001">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select th:field="*{kategori}">
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="Smartphone">Smartphone</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Tablet">Tablet</option>
+                        <option value="Audio">Audio</option>
+                        <option value="Kamera">Kamera</option>
+                        <option value="Aksesoris">Aksesoris</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label>Nama Barang</label>
+                    <input type="text" th:field="*{namaBarang}" placeholder="Nama lengkap produk">
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" th:field="*{harga}" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Stok</label>
+                    <input type="number" th:field="*{stok}" placeholder="0" min="0">
+                </div>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:28px;">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="/barang" class="btn btn-secondary">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

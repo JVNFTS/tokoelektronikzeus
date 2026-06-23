@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Transaksi – Zeus</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav>
+    <div class="nav-brand">⚡ Zeus <span>Toko Elektronik</span></div>
+    <div class="nav-links">
+        <a href="/dashboard" class="nav-link">Dashboard</a>
+        <a href="/barang" class="nav-link">Barang</a>
+        <a href="/customer" class="nav-link">Customer</a>
+        <a href="/transaksi" class="nav-link"
+           th:classappend="${penjualan.jenisTransaksi.name() == 'JUAL'} ? ' active' : ''">Transaksi</a>
+        <a href="/transaksi/restock" class="nav-link"
+           th:classappend="${penjualan.jenisTransaksi.name() == 'RESTOCK'} ? ' active' : ''">Restock</a>
+        <a href="/laporan/stok" class="nav-link">Laporan</a>
+    </div>
+    <div class="nav-right">
+        <a href="/logout" class="btn btn-secondary btn-sm">Keluar</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="page-header">
+        <div>
+            <h2 th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">Detail Transaksi Penjualan</h2>
+            <h2 th:if="${penjualan.jenisTransaksi.name() == 'RESTOCK'}"
+                style="color:#60a5fa;">Detail Restock</h2>
+            <p th:text="'No. ' + ${penjualan.noTransaksi}"
+               th:style="${penjualan.jenisTransaksi.name() == 'RESTOCK'} ? 'font-family:monospace; color:#60a5fa;' : 'font-family:monospace; color:#f0b429;'"></p>
+        </div>
+        <a href="/transaksi" class="btn btn-secondary"
+           th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">← Kembali</a>
+        <a href="/transaksi/riwayat-restock" class="btn btn-secondary"
+           th:if="${penjualan.jenisTransaksi.name() == 'RESTOCK'}">← Kembali</a>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+        <div class="detail-header">
+            <div class="detail-item">
+                <label>Tanggal</label>
+                <span th:text="${#temporals.format(penjualan.tanggalTransaksi, 'dd MMMM yyyy, HH:mm')}"></span>
+            </div>
+            <div class="detail-item">
+                <label>Kasir</label>
+                <span th:text="${penjualan.user.username}"></span>
+            </div>
+            <div class="detail-item" th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">
+                <label>Customer</label>
+                <span th:text="${penjualan.customer != null} ? ${penjualan.customer.namaCustomer} : 'Pelanggan Umum'"></span>
+            </div>
+            <div class="detail-item">
+                <label>Keterangan</label>
+                <span th:text="${penjualan.keterangan ?: '—'}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-wrap" style="margin-bottom:20px;">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Kode Barang</th>
+                    <th>Nama Barang</th>
+                    <th th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">Harga Satuan</th>
+                    <th>Jumlah</th>
+                    <th th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="d, stat : ${details}">
+                    <td th:text="${stat.count}" style="color:#4b5563;"></td>
+                    <td th:style="${penjualan.jenisTransaksi.name() == 'RESTOCK'} ? 'font-family:monospace; color:#60a5fa;' : 'font-family:monospace; color:#f0b429;'"
+                        th:text="${d.barang.kodeBarang}"></td>
+                    <td th:text="${d.barang.namaBarang}"></td>
+                    <td th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(d.hargaSatuan, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td th:text="${d.jumlah}" style="font-weight:600;"></td>
+                    <td th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}"
+                        th:text="'Rp ' + ${#numbers.formatDecimal(d.subtotal, 0, 'COMMA', 0, 'POINT')}"
+                        style="color:#34d399; font-weight:600;"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end;"
+         th:if="${penjualan.jenisTransaksi.name() == 'JUAL'}">
+        <div class="card" style="min-width:280px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#9ca3af; font-size:14px;">Total Transaksi</span>
+                <span style="color:#f0b429; font-size:26px; font-weight:700;"
+                      th:text="'Rp ' + ${#numbers.formatDecimal(penjualan.totalHarga, 0, 'COMMA', 0, 'POINT')}"></span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
