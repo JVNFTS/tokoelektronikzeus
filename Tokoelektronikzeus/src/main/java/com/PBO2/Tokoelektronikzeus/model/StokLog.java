@@ -12,8 +12,14 @@ public class StokLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kode_barang", nullable = false)
+    @JoinColumn(name = "kode_barang", nullable = true)
     private Barang barang;
+
+    @Column(name = "kode_barang_ref", length = 20)
+    private String kodeBarangRef;
+
+    @Column(name = "nama_barang_ref", length = 100)
+    private String namaBarangRef;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "jenis_mutasi", nullable = false)
@@ -41,13 +47,13 @@ public class StokLog {
         MASUK, KELUAR
     }
 
-    public StokLog() {
-
-    }
+    public StokLog() {}
 
     public StokLog(Barang barang, JenisMutasi jenisMutasi, int jumlah,
                    int stokSebelum, int stokSesudah, String noTransaksi, String keterangan) {
         this.barang = barang;
+        this.kodeBarangRef = barang.getKodeBarang();
+        this.namaBarangRef = barang.getNamaBarang();
         this.jenisMutasi = jenisMutasi;
         this.jumlah = jumlah;
         this.stokSebelum = stokSebelum;
@@ -55,6 +61,18 @@ public class StokLog {
         this.noTransaksi = noTransaksi;
         this.tanggal = LocalDateTime.now();
         this.keterangan = keterangan;
+    }
+
+    public String getNamaBarangDisplay() {
+        if (namaBarangRef != null && !namaBarangRef.isEmpty()) return namaBarangRef;
+        if (barang != null) return barang.getNamaBarang();
+        return kodeBarangRef != null ? kodeBarangRef : "—";
+    }
+
+    public String getKodeBarangDisplay() {
+        if (kodeBarangRef != null && !kodeBarangRef.isEmpty()) return kodeBarangRef;
+        if (barang != null) return barang.getKodeBarang();
+        return "—";
     }
 
     public Long getId() { 
@@ -73,6 +91,22 @@ public class StokLog {
         this.barang = barang; 
     }
 
+    public String getKodeBarangRef() { 
+        return kodeBarangRef; 
+    }
+
+    public void setKodeBarangRef(String kodeBarangRef) { 
+        this.kodeBarangRef = kodeBarangRef; 
+    }
+
+    public String getNamaBarangRef() { 
+        return namaBarangRef; 
+    }
+
+    public void setNamaBarangRef(String namaBarangRef) { 
+        this.namaBarangRef = namaBarangRef; 
+    }
+
     public JenisMutasi getJenisMutasi() { 
         return jenisMutasi; 
     }
@@ -84,7 +118,6 @@ public class StokLog {
     public int getJumlah() { 
         return jumlah; 
     }
-
     public void setJumlah(int jumlah) { 
         this.jumlah = jumlah; 
     }
@@ -92,7 +125,6 @@ public class StokLog {
     public int getStokSebelum() { 
         return stokSebelum; 
     }
-
     public void setStokSebelum(int stokSebelum) { 
         this.stokSebelum = stokSebelum; 
     }
@@ -100,15 +132,13 @@ public class StokLog {
     public int getStokSesudah() { 
         return stokSesudah; 
     }
-
-    public void setStokSesudah(int stokSesudah) {
+    public void setStokSesudah(int stokSesudah) { 
         this.stokSesudah = stokSesudah; 
     }
 
     public String getNoTransaksi() { 
         return noTransaksi; 
     }
-
     public void setNoTransaksi(String noTransaksi) { 
         this.noTransaksi = noTransaksi; 
     }
@@ -116,7 +146,8 @@ public class StokLog {
     public LocalDateTime getTanggal() { 
         return tanggal; 
     }
-    public void setTanggal(LocalDateTime tanggal) {
+
+    public void setTanggal(LocalDateTime tanggal) { 
         this.tanggal = tanggal; 
     }
 
