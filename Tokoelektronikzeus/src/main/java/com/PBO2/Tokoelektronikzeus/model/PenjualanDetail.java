@@ -22,14 +22,14 @@ public class PenjualanDetail {
     private int jumlah;
 
     @Column(name = "harga_satuan", nullable = false)
-    private double hargaSatuan;
+    private long hargaSatuan;
 
     @Column(name = "subtotal", nullable = false)
-    private double subtotal;
+    private long subtotal;
 
     public PenjualanDetail() {}
 
-    public PenjualanDetail(Penjualan penjualan, Barang barang, int jumlah, double hargaSatuan) {
+    public PenjualanDetail(Penjualan penjualan, Barang barang, int jumlah, long hargaSatuan) {
         this.penjualan = penjualan;
         this.barang = barang;
         this.jumlah = jumlah;
@@ -70,20 +70,20 @@ public class PenjualanDetail {
         this.subtotal = jumlah * this.hargaSatuan;
     }
 
-    public double getHargaSatuan() { 
+    public long getHargaSatuan() { 
         return hargaSatuan; 
     }
 
-    public void setHargaSatuan(double hargaSatuan) {
+    public void setHargaSatuan(long hargaSatuan) {
         this.hargaSatuan = hargaSatuan;
         this.subtotal = this.jumlah * hargaSatuan;
     }
 
-    public double getSubtotal() { 
+    public long getSubtotal() { 
         return subtotal; 
     }
 
-    public void setSubtotal(double subtotal) { 
+    public void setSubtotal(long subtotal) { 
         this.subtotal = subtotal; 
     }
 }
