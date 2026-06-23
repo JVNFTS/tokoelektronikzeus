@@ -28,7 +28,7 @@ public class Penjualan {
     private JenisTransaksi jenisTransaksi;
 
     @Column(name = "total_harga", nullable = false)
-    private double totalHarga;
+    private long totalHarga;
 
     @Column(name = "keterangan", length = 255)
     private String keterangan;
@@ -44,7 +44,7 @@ public class Penjualan {
 
     public Penjualan(String noTransaksi, Customer customer, User user,
                      LocalDateTime tanggalTransaksi, JenisTransaksi jenisTransaksi,
-                     double totalHarga, String keterangan) {
+                     long totalHarga, String keterangan) {
         this.noTransaksi = noTransaksi;
         this.customer = customer;
         this.user = user;
@@ -58,7 +58,7 @@ public class Penjualan {
         return noTransaksi; 
     }
 
-    public void setNoTransaksi(String noTransaksi) {
+    public void setNoTransaksi(String noTransaksi) { 
         this.noTransaksi = noTransaksi; 
     }
 
@@ -73,8 +73,7 @@ public class Penjualan {
     public User getUser() { 
         return user; 
     }
-
-    public void setUser(User user) { 
+    public void setUser(User user) {
         this.user = user; 
     }
 
@@ -94,11 +93,11 @@ public class Penjualan {
         this.jenisTransaksi = jenisTransaksi; 
     }
 
-    public double getTotalHarga() { 
+    public long getTotalHarga() { 
         return totalHarga; 
     }
 
-    public void setTotalHarga(double totalHarga) { 
+    public void setTotalHarga(long totalHarga) { 
         this.totalHarga = totalHarga; 
     }
 
@@ -106,7 +105,7 @@ public class Penjualan {
         return keterangan; 
     }
 
-    public void setKeterangan(String keterangan) {
+    public void setKeterangan(String keterangan) { 
         this.keterangan = keterangan; 
     }
 
@@ -115,6 +114,6 @@ public class Penjualan {
     }
 
     public void setDetailList(List<PenjualanDetail> detailList) { 
-        this.detailList = detailList; 
+        this.detailList = detailList;
     }
 }
