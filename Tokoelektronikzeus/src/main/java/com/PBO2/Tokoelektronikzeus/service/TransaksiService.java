@@ -53,23 +53,28 @@ public class TransaksiService {
 
     @Transactional
     public void simpanTransaksi(Penjualan penjualan, List<PenjualanDetail> details) {
-        double total = 0;
+        long total = 0;
 
         for (PenjualanDetail detail : details) {
             Barang barang = barangRepository.findById(detail.getBarang().getKodeBarang())
                     .orElseThrow(() -> new RuntimeException("Barang tidak ditemukan: "
                             + detail.getBarang().getKodeBarang()));
 
+            if (!barang.isAktif()) {
+                throw new RuntimeException("Barang sudah tidak aktif: " + barang.getNamaBarang());
+            }
+
             int stokSebelum = barang.getStok();
             int jumlah = detail.getJumlah();
 
-            if (barang.getStok() < jumlah) {
+            if (stokSebelum < jumlah) {
                 throw new RuntimeException("Stok tidak cukup untuk: " + barang.getNamaBarang()
                         + " (stok: " + stokSebelum + ", diminta: " + jumlah + ")");
             }
             barang.setStok(stokSebelum - jumlah);
             barangRepository.save(barang);
 
+            // Snapshot otomatis diisi oleh constructor StokLog
             stokLogRepository.save(new StokLog(
                     barang, JenisMutasi.KELUAR, jumlah, stokSebelum, barang.getStok(),
                     penjualan.getNoTransaksi(), "JUAL"));
@@ -96,6 +101,7 @@ public class TransaksiService {
             int stokSebelum = barang.getStok();
             int jumlah = detail.getJumlah();
             barang.setStok(stokSebelum + jumlah);
+            barang.setAktif(true);
             barangRepository.save(barang);
 
             stokLogRepository.save(new StokLog(
@@ -139,7 +145,6 @@ public class TransaksiService {
         }
 
         stokLogRepository.deleteByNoTransaksi(noTransaksi);
-
         detailRepository.deleteAll(details);
         penjualanRepository.delete(penjualan);
     }
