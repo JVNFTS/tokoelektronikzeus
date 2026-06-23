@@ -31,7 +31,7 @@ public class LaporanService {
     }
 
     public List<StokLog> getLogByBarang(String kodeBarang) {
-        return stokLogRepository.findByBarang_KodeBarang(kodeBarang);
+        return stokLogRepository.findByKodeBarangRef(kodeBarang);
     }
 
     public List<StokLog> getLogByPeriode(LocalDate dari, LocalDate sampai) {
@@ -43,6 +43,6 @@ public class LaporanService {
     public List<StokLog> getLogByBarangDanPeriode(String kodeBarang, LocalDate dari, LocalDate sampai) {
         LocalDateTime start = dari.atStartOfDay();
         LocalDateTime end = sampai.atTime(23, 59, 59);
-        return stokLogRepository.findByBarang_KodeBarangAndTanggalBetween(kodeBarang, start, end);
+        return stokLogRepository.findByKodeBarangRefAndTanggalBetween(kodeBarang, start, end);
     }
 }
