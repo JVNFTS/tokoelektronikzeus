@@ -66,7 +66,6 @@ public class BarangService {
         if (barang.isAktif()) {
             throw new RuntimeException("Nonaktifkan barang terlebih dahulu sebelum menghapus.");
         }
-        // Putuskan FK ke barang di semua log (snapshot tetap tersimpan)
         stokLogRepository.detachBarang(kodeBarang);
         barangRepository.delete(barang);
     }
