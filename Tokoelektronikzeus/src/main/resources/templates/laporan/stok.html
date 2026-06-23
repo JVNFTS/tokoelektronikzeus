@@ -102,8 +102,8 @@
                     <td th:text="${#temporals.format(log.tanggal, 'dd/MM/yyyy HH:mm')}" style="white-space:nowrap;"></td>
                     <td style="font-family:monospace; color:#f0b429; font-size:12px;" th:text="${log.noTransaksi ?: '—'}"></td>
                     <td>
-                        <div style="font-weight:600; font-size:13px;" th:text="${log.barang.namaBarang}"></div>
-                        <div style="color:#6b7280; font-size:11px; font-family:monospace;" th:text="${log.barang.kodeBarang}"></div>
+                        <div style="font-weight:600; font-size:13px;" th:text="${log.namaBarangDisplay}"></div>
+                        <div style="color:#6b7280; font-size:11px; font-family:monospace;" th:text="${log.kodeBarangDisplay}"></div>
                     </td>
                     <td>
                         <span class="badge"
