@@ -66,12 +66,19 @@ public class LaporanController {
                 .mapToInt(StokLog::getJumlah).sum();
 
         model.addAttribute("logs", logs);
+
         model.addAttribute("listBarang", barangService.getAllBarang());
+
         model.addAttribute("totalMasuk", totalMasuk);
+
         model.addAttribute("totalKeluar", totalKeluar);
+
         model.addAttribute("filterKode", kodeBarang);
+
         model.addAttribute("filterDari", dari);
+
         model.addAttribute("filterSampai", sampai);
+        
         model.addAttribute("filterJenis", jenisMutasi);
 
         return "laporan/stok";
