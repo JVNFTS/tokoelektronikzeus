@@ -2,11 +2,8 @@ package com.PBO2.Tokoelektronikzeus.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.PBO2.Tokoelektronikzeus.model.Barang;
 import com.PBO2.Tokoelektronikzeus.service.BarangService;
@@ -63,11 +60,42 @@ public class BarangController {
         barangService.updateBarang(barang);
         return "redirect:/barang";
     }
-  
-    @GetMapping("/hapus/{kodeBarang}")
-    public String hapus(@PathVariable String kodeBarang, HttpSession session) {
+
+    /** Nonaktifkan barang (soft delete) */
+    @GetMapping("/nonaktif/{kodeBarang}")
+    public String nonaktif(@PathVariable String kodeBarang, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
-        barangService.hapusBarang(kodeBarang);
+        try {
+            barangService.nonaktifkanBarang(kodeBarang);
+            ra.addFlashAttribute("sukses", "Barang berhasil dinonaktifkan.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/barang";
+    }
+
+    /** Aktifkan kembali barang */
+    @GetMapping("/aktif/{kodeBarang}")
+    public String aktif(@PathVariable String kodeBarang, HttpSession session, RedirectAttributes ra) {
+        if (belumLogin(session)) return "redirect:/";
+        try {
+            barangService.aktifkanBarang(kodeBarang);
+            ra.addFlashAttribute("sukses", "Barang berhasil diaktifkan kembali.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/barang";
+    }
+
+    @GetMapping("/hapus/{kodeBarang}")
+    public String hapus(@PathVariable String kodeBarang, HttpSession session, RedirectAttributes ra) {
+        if (belumLogin(session)) return "redirect:/";
+        try {
+            barangService.hapusBarang(kodeBarang);
+            ra.addFlashAttribute("sukses", "Barang berhasil dihapus. Riwayat stok log tetap tersimpan.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/barang";
     }
 }
