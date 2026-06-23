@@ -20,7 +20,7 @@ public class Barang {
     private String kategori;
 
     @Column(name = "harga", nullable = false)
-    private double harga;
+    private long harga;
 
     @Column(name = "stok", nullable = false)
     private int stok;
@@ -28,7 +28,7 @@ public class Barang {
     public Barang() {
     }
 
-    public Barang(String kodeBarang, String namaBarang, String kategori, double harga, int stok) {
+    public Barang(String kodeBarang, String namaBarang, String kategori, long harga, int stok) {
         this.kodeBarang = kodeBarang;
         this.namaBarang = namaBarang;
         this.kategori = kategori;
@@ -60,17 +60,18 @@ public class Barang {
         this.kategori = kategori; 
     }
 
-    public double getHarga() { 
+    public long getHarga() { 
         return harga; 
     }
 
-    public void setHarga(double harga) { 
+    public void setHarga(long harga) { 
         this.harga = harga; 
     }
 
     public int getStok() { 
         return stok; 
     }
+
 
     public void setStok(int stok) { 
         this.stok = stok; 
