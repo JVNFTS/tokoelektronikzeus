@@ -25,7 +25,11 @@ public class Barang {
     @Column(name = "stok", nullable = false)
     private int stok;
 
+    @Column(name = "aktif", nullable = false)
+    private boolean aktif = true;
+
     public Barang() {
+
     }
 
     public Barang(String kodeBarang, String namaBarang, String kategori, long harga, int stok) {
@@ -34,6 +38,7 @@ public class Barang {
         this.kategori = kategori;
         this.harga = harga;
         this.stok = stok;
+        this.aktif = true;
     }
 
     public String getKodeBarang() { 
@@ -44,13 +49,14 @@ public class Barang {
         this.kodeBarang = kodeBarang; 
     }
 
+
     public String getNamaBarang() { 
         return namaBarang; 
     }
 
-    public void setNamaBarang(String namaBarang) {
+    public void setNamaBarang(String namaBarang) { 
         this.namaBarang = namaBarang; 
-        }
+    }
 
     public String getKategori() { 
         return kategori; 
@@ -64,16 +70,20 @@ public class Barang {
         return harga; 
     }
 
-    public void setHarga(long harga) { 
+    public void setHarga(long harga) {
         this.harga = harga; 
     }
 
     public int getStok() { 
         return stok; 
     }
-
-
     public void setStok(int stok) { 
         this.stok = stok; 
     }
+
+    public boolean isAktif() { 
+        return aktif; 
+    }
+    
+    public void setAktif(boolean aktif) { this.aktif = aktif; }
 }
