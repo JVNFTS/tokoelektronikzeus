@@ -25,11 +25,12 @@ public class TransaksiController {
     private final BarangService barangService;
     private final UserRepository userRepository;
 
-    public TransaksiController(TransaksiService transaksiService, CustomerService customerService, BarangService barangService, UserRepository userRepository) {
-                                this.transaksiService = transaksiService;
-                                this.customerService = customerService;
-                                this.barangService = barangService;
-                                this.userRepository = userRepository;
+    public TransaksiController(TransaksiService transaksiService, CustomerService customerService,
+                               BarangService barangService, UserRepository userRepository) {
+        this.transaksiService = transaksiService;
+        this.customerService = customerService;
+        this.barangService = barangService;
+        this.userRepository = userRepository;
     }
 
     private boolean belumLogin(HttpSession session) {
@@ -54,7 +55,8 @@ public class TransaksiController {
     public String formBaru(HttpSession session, Model model) {
         if (belumLogin(session)) return "redirect:/";
         model.addAttribute("noTransaksi", transaksiService.generateNoTransaksi(JenisTransaksi.JUAL));
-        model.addAttribute("listBarang", barangService.getAllBarang());
+        // FIX: hanya tampilkan barang aktif di dropdown
+        model.addAttribute("listBarang", barangService.getBarangAktif());
         model.addAttribute("listCustomer", customerService.getAllCustomer());
         return "transaksi/form";
     }
