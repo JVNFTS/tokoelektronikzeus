@@ -7,6 +7,9 @@
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
+CREATE DATABASE IF NOT EXISTS db_toko_elektronik_zeus;
+USE db_toko_elektronik_zeus;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
