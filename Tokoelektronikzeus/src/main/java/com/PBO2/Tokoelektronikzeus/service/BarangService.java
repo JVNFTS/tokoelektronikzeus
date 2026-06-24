@@ -41,7 +41,6 @@ public class BarangService {
         barangRepository.save(barang);
     }
 
-    /** Nonaktifkan barang (soft delete) */
     @Transactional
     public void nonaktifkanBarang(String kodeBarang) {
         Barang barang = barangRepository.findById(kodeBarang)
@@ -50,7 +49,6 @@ public class BarangService {
         barangRepository.save(barang);
     }
 
-    /** Aktifkan kembali barang */
     @Transactional
     public void aktifkanBarang(String kodeBarang) {
         Barang barang = barangRepository.findById(kodeBarang)
