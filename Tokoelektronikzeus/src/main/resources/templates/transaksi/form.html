@@ -220,7 +220,10 @@
                 body: params
             });
 
-            if (!resp.ok) throw new Error('Gagal menyimpan');
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.error || 'Gagal menyimpan customer. Coba lagi.');
+            }
 
             const data = await resp.json();
 
@@ -233,7 +236,8 @@
 
             tutupModal();
         } catch (e) {
-            errEl.textContent = 'Gagal menyimpan customer. Coba lagi.';
+            errEl.textContent = e.message;
+            errEl.style.display = 'block';
             errEl.style.display = 'block';
         }
     }
