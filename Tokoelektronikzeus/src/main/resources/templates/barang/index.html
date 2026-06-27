@@ -30,6 +30,9 @@
         <a href="/barang/tambah" class="btn btn-primary">+ Tambah Barang</a>
     </div>
 
+    <div class="alert alert-success" th:if="${sukses}" th:text="${sukses}"></div>
+    <div class="alert alert-danger"  th:if="${error}"  th:text="${error}"></div>
+
     <div class="table-wrap">
         <table>
             <thead>
