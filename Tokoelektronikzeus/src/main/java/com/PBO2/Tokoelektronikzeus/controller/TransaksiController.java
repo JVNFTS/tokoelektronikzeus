@@ -55,7 +55,6 @@ public class TransaksiController {
     public String formBaru(HttpSession session, Model model) {
         if (belumLogin(session)) return "redirect:/";
         model.addAttribute("noTransaksi", transaksiService.generateNoTransaksi(JenisTransaksi.JUAL));
-        // FIX: hanya tampilkan barang aktif di dropdown
         model.addAttribute("listBarang", barangService.getBarangAktif());
         model.addAttribute("listCustomer", customerService.getAllCustomer());
         return "transaksi/form";
@@ -78,7 +77,9 @@ public class TransaksiController {
             result.put("namaCustomer", c.getNamaCustomer());
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
         }
     }
 
