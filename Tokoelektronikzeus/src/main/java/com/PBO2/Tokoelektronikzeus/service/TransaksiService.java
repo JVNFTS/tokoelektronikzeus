@@ -167,10 +167,6 @@ public class TransaksiService {
         return penjualanRepository.findById(noTransaksi).orElse(null);
     }
 
-    public List<Penjualan> getByPeriode(LocalDateTime dari, LocalDateTime sampai) {
-        return penjualanRepository.findByTanggalTransaksiBetween(dari, sampai);
-    }
-
     public List<PenjualanDetail> getDetailByNo(String noTransaksi) {
         return detailRepository.findByPenjualan_NoTransaksi(noTransaksi);
     }
