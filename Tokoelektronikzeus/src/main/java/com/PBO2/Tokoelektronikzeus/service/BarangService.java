@@ -33,6 +33,9 @@ public class BarangService {
     }
 
     public void tambahBarang(Barang barang) {
+        if (barangRepository.existsById(barang.getKodeBarang())) {
+            throw new RuntimeException("Kode barang '" + barang.getKodeBarang() + "' sudah digunakan. Gunakan kode yang berbeda.");
+        }
         barang.setAktif(true);
         barangRepository.save(barang);
     }
