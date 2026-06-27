@@ -27,6 +27,21 @@ public class CustomerService {
         return customerRepository.findByNamaCustomerContainingIgnoreCase(keyword);
     }
 
+    public void tambah(Customer customer) {
+        if (customerRepository.existsByNamaCustomerIgnoreCase(customer.getNamaCustomer())) {
+            throw new RuntimeException("Nama customer '" + customer.getNamaCustomer() + "' sudah terdaftar.");
+        }
+        customerRepository.save(customer);
+    }
+
+    public void update(Customer customer) {
+        if (customerRepository.existsByNamaCustomerIgnoreCaseAndIdNot(
+                customer.getNamaCustomer(), customer.getId())) {
+            throw new RuntimeException("Nama customer '" + customer.getNamaCustomer() + "' sudah digunakan customer lain.");
+        }
+        customerRepository.save(customer);
+    }
+
     public void simpan(Customer customer) {
         customerRepository.save(customer);
     }
