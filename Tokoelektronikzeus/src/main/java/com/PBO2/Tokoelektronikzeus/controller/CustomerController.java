@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/customer")
@@ -42,9 +43,14 @@ public class CustomerController {
     }
 
     @PostMapping("/simpan")
-    public String simpan(@ModelAttribute Customer customer, HttpSession session) {
+    public String simpan(@ModelAttribute Customer customer, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
-        customerService.simpan(customer);
+        try {
+            customerService.tambah(customer);
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/customer/tambah";
+        }
         return "redirect:/customer";
     }
 
@@ -57,9 +63,14 @@ public class CustomerController {
     }
 
     @PostMapping("/update")
-    public String update(@ModelAttribute Customer customer, HttpSession session) {
+    public String update(@ModelAttribute Customer customer, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
-        customerService.simpan(customer);
+        try {
+            customerService.update(customer);
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/customer/edit/" + customer.getId();
+        }
         return "redirect:/customer";
     }
 
