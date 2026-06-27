@@ -74,7 +74,6 @@ public class TransaksiService {
             barang.setStok(stokSebelum - jumlah);
             barangRepository.save(barang);
 
-            // Snapshot otomatis diisi oleh constructor StokLog
             stokLogRepository.save(new StokLog(
                     barang, JenisMutasi.KELUAR, jumlah, stokSebelum, barang.getStok(),
                     penjualan.getNoTransaksi(), "JUAL"));
@@ -151,6 +150,9 @@ public class TransaksiService {
 
     @Transactional
     public Customer simpanCustomerBaru(String nama, String noTelepon, String alamat) {
+        if (customerRepository.existsByNamaCustomerIgnoreCase(nama)) {
+            throw new RuntimeException("Nama customer '" + nama + "' sudah terdaftar.");
+        }
         Customer c = new Customer(nama, noTelepon, alamat);
         return customerRepository.save(c);
     }
