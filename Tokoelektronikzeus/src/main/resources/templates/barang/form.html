@@ -30,6 +30,9 @@
         <a href="/barang" class="btn btn-secondary">← Kembali</a>
     </div>
 
+    <div class="alert alert-success" th:if="${sukses}" th:text="${sukses}"></div>
+    <div class="alert alert-danger"  th:if="${error}"  th:text="${error}"></div>
+
     <div class="form-card">
         <form th:action="${mode == 'tambah'} ? @{/barang/simpan} : @{/barang/update}"
               th:object="${barang}" method="post">
