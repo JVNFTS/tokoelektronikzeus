@@ -40,9 +40,15 @@ public class BarangController {
     }
 
     @PostMapping("/simpan")
-    public String simpan(@ModelAttribute Barang barang, HttpSession session) {
+    public String simpan(@ModelAttribute Barang barang, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
-        barangService.tambahBarang(barang);
+        try {
+            barangService.tambahBarang(barang);
+            ra.addFlashAttribute("sukses", "Barang berhasil ditambahkan.");
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+            return "redirect:/barang/tambah";
+        }
         return "redirect:/barang";
     }
 
@@ -61,7 +67,6 @@ public class BarangController {
         return "redirect:/barang";
     }
 
-    /** Nonaktifkan barang (soft delete) */
     @GetMapping("/nonaktif/{kodeBarang}")
     public String nonaktif(@PathVariable String kodeBarang, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
@@ -74,7 +79,6 @@ public class BarangController {
         return "redirect:/barang";
     }
 
-    /** Aktifkan kembali barang */
     @GetMapping("/aktif/{kodeBarang}")
     public String aktif(@PathVariable String kodeBarang, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
