@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface StokLogRepository extends JpaRepository<StokLog, Long> {
 
-    List<StokLog> findByBarang_KodeBarang(String kodeBarang);
-
     List<StokLog> findByKodeBarangRef(String kodeBarangRef);
 
     List<StokLog> findByJenisMutasi(JenisMutasi jenisMutasi);
@@ -22,9 +20,6 @@ public interface StokLogRepository extends JpaRepository<StokLog, Long> {
 
     List<StokLog> findByKodeBarangRefAndTanggalBetween(
             String kodeBarangRef, LocalDateTime dari, LocalDateTime sampai);
-
-    List<StokLog> findByBarang_KodeBarangAndTanggalBetween(
-            String kodeBarang, LocalDateTime dari, LocalDateTime sampai);
 
     void deleteByNoTransaksi(String noTransaksi);
 
