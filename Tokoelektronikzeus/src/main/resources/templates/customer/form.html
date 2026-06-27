@@ -30,11 +30,12 @@
         <a href="/customer" class="btn btn-secondary">← Kembali</a>
     </div>
 
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
     <div class="form-card">
         <form th:action="${mode == 'tambah'} ? @{/customer/simpan} : @{/customer/update}"
               th:object="${customer}" method="post">
 
-            <!-- hidden id saat edit -->
             <input type="hidden" th:if="${mode == 'edit'}" th:field="*{id}">
 
             <div class="form-grid">
