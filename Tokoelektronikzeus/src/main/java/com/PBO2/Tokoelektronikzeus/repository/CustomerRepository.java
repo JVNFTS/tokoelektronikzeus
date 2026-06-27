@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByNamaCustomerContainingIgnoreCase(String keyword);
+
+    boolean existsByNamaCustomerIgnoreCase(String namaCustomer);
+
+    boolean existsByNamaCustomerIgnoreCaseAndIdNot(String namaCustomer, Long id);
 }
