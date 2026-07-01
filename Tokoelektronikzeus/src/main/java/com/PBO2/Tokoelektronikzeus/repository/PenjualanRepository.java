@@ -12,6 +12,8 @@ public interface PenjualanRepository extends JpaRepository<Penjualan, String> {
 
     List<Penjualan> findByJenisTransaksi(JenisTransaksi jenisTransaksi);
 
+    boolean existsByCustomer_Id(Long customerId);
+
     @Query(value = "SELECT no_transaksi FROM penjualan WHERE no_transaksi LIKE :prefix ORDER BY no_transaksi DESC LIMIT 1", nativeQuery = true)
 String findLatestNoTransaksiByPrefix(@Param("prefix") String prefix);
 }
