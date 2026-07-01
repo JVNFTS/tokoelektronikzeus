@@ -75,9 +75,14 @@ public class CustomerController {
     }
 
     @GetMapping("/hapus/{id}")
-    public String hapus(@PathVariable Long id, HttpSession session) {
+    public String hapus(@PathVariable Long id, HttpSession session, RedirectAttributes ra) {
         if (belumLogin(session)) return "redirect:/";
-        customerService.hapus(id);
+        try {
+            customerService.hapus(id);
+            ra.addFlashAttribute("sukses", "Customer berhasil dihapus.");
+        } catch (RuntimeException e) {
+            ra.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/customer";
     }
 }
