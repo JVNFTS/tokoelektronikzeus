@@ -96,7 +96,7 @@ public class BarangController {
         if (belumLogin(session)) return "redirect:/";
         try {
             barangService.hapusBarang(kodeBarang);
-            ra.addFlashAttribute("sukses", "Barang berhasil dihapus. Riwayat stok log tetap tersimpan.");
+            ra.addFlashAttribute("sukses", "Barang berhasil dihapus.");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
